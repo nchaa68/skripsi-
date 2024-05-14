@@ -1,0 +1,167 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+
+* {
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    font-family:"Poppins", sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    width: 100%;
+    z-index: 100;
+    padding: 0 20px;
+    background-color: rgb(79, 79, 218);
+}
+
+.container {
+    margin-top: 100px; /* Sesuaikan margin-top sesuai kebutuhan */
+}
+
+.nav{
+    max-width:1100px;
+    width:100%;
+    margin:0 auto;
+}
+
+.nav,
+.nav-item{
+    display: flex;
+    height: 80px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-logo,
+.nav-link,
+.button{
+    color:white;
+}
+
+.nav-logo{
+    font-size: 24px;
+}
+
+.nav-item{
+    column-gap: 30px;
+}
+
+.nav-link:hover{
+    color: #aaaaaa;
+}
+
+.button{
+    padding:6px 24px;
+    border: 2px solid white ;
+    background: transparent;
+    border-radius: 6px;
+    cursor:pointer;
+}
+
+.button:active{
+    transform: scale(0.98);
+}
+
+body {
+    font-size: 16px;
+    margin: 0 auto;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 35px; /* Ubah ukuran font sesuai keinginan */
+    margin: 90px auto; /* Menyederhanakan margin */
+    max-width: 1000px; /* Sesuaikan lebar maksimum */
+    text-align: center;
+}
+
+form {
+    margin : 5px auto;
+    max-width: 600px; /* Lebar maksimum formulir */
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.form-control,
+select,
+input[type="number"] {
+    width: calc(100% - 16px); /* Lebar formulir - padding */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: rgb(79, 79, 218);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#submit {
+    margin-top: 25px;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+table {
+    width: 70%;
+    border-collapse: collapse;
+    text-align: center;
+    align-items: center;
+    margin: 10px auto
+}
+
+table, th, td {
+    border: 1px solid black;
+    text-align: center;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: rgb(79, 79, 218);
+    color: white;
+}
+
+/* Additional Styling for responsiveness */
+@media screen and (max-width: 600px) {
+    .nav-items {
+        display: none;
+    }
+    .nav-logo {
+        font-size: 20px;
+    }
+    .button {
+        font-size: 14px;
+    }
+}

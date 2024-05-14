@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password MedStance</title>
+    <link rel="stylesheet" href="forgotpass.css" />
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="nav-logo">MedStance</a>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <div id="lupaAkunForm">
+            <label for="email">Email:</label>
+            <p> Masukkan email anda untuk pemulihan akun </p>
+            <input type="email" id="email" name="email" required><br><br>
+            <button type="button" id="batalButton">Batal</button>
+            <button id="kirimButton">Kirim Email</button>
+        </div>
+    </div>
+
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+        // Your web app's Firebase configuration
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAVMivFBYZHxWDFw9MKt02CWpb85MCzJ4",
+            authDomain: "loginsignauth-cf5bb.firebaseapp.com",
+            projectId: "loginsignauth-cf5bb",
+            storageBucket: "loginsignauth-cf5bb.appspot.com",
+            messagingSenderId: "436692858400",
+            appId: "1:436692858400:web:4baa9de7c0174a37dbee45"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById('batalButton').addEventListener('click', function () {
+            window.location.href = 'index.html'; // Ganti dengan lokasi yang sesuai
+        });
+
+        document.getElementById('kirimButton').addEventListener('click', function () {
+            var email = document.getElementById('email').value;
+
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    alert("Email verifikasi telah dikirim!");
+                })
+                .catch((error) => {
+                    if (error.code === "auth/user-not-found") {
+                        alert("Email Anda belum terdaftar.");
+                    } else {
+                        alert(error.message);
+                    }
+                });
+        });
+    </script>
+</body>
+
+</html>

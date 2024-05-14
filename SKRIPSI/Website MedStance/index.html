@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE-edge" />
+    <meta name="viewport" content="width=device-width, intial-scale=1.0" />
+    <title>MedStance</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <!-- HEADER NAVBAR -->
+    <header header class="header">
+        <nav class="nav">
+            <a href="#" class="nav-logo">MedStance</a>
+
+            <ul class="nav-items">
+                <li class="nav-item">
+                    <a href="javascript:void(0);" class="nav-link">Home</a>
+                    <a href="javascript:void(0);" class="nav-link disabled" id="timerLink">Alarm</a>
+                    <a href="javascript:void(0);" class="nav-link disabled" id="medicineLink">Medicine</a>
+                </li>
+            </ul>
+
+            <button class="button" id="form-open">Login</button>
+            <button class="button" id="logout">Logout</button>
+        </nav>
+    </header>
+    <!-- NAVBAR END -->
+
+    <!-- Pesan untuk tampilkan sebelum login -->
+
+    <!-- HOME -->
+    <section class="home">
+        <div class="overlay-text">
+            <h1> "Your Everyday Medical Assistance"</h1>
+            <h2> Konsumsi Obat Berbasis Internet of Things </h2>
+            <h3> Kontrol Kesehatan Anda dengan Cerdas</h3>
+        </div>
+        <i class="form_container">
+            <i class='bx bx-x form_close'></i>
+            <!-- login form -->
+            <div class="form login_form" id="login_form">
+                <form action="#">
+                    <h2>Login</h2>
+
+                    <div class="input_box" id="logmail">
+                        <input type="email" placeholder="Enter your email" required />
+                        <i class='bx bx-envelope email'></i>
+                    </div>
+
+                    <div class="input_box" id="logpass">
+                        <input type="password" placeholder="Enter your password" required />
+                        <i class='bx bx-lock-alt password'></i>
+                        <i class='fa fa-eye-slash pw_hide'></i>
+                    </div>
+
+
+                    <div class="option_field">
+                        <span class="checkbox">
+                            <input type="checkbox" id="check">
+                            <label for="check">Remember me</label>
+                        </span>
+                        <a href="forgotpass.html" class="forgot_pw">Forgot Password?</a>
+                    </div>
+
+                    <button class="button">Login</button>
+
+                    <div class="login_signup">
+                        Don't have an account? <a href="#" id="signup"> Sign Up</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- SIGN UP FORM -->
+            <div class="form signup_form" id="signup_form">
+                <form action="#">
+                    <h2>Registration</h2>
+
+                    <div class="input_box" id="signmail">
+                        <input type="email" placeholder="Enter your email" required />
+                        <i class='bx bx-envelope email'></i>
+                    </div>
+
+                    <div class="input_box" id="signpass">
+                        <input type="password" placeholder="Create password" required />
+                        <i class='bx bx-lock-alt password'></i>
+                        <i class='fa fa-eye-slash pw_hide'></i>
+                    </div>
+
+                    <div class="input_box">
+                        <input type="password" placeholder="Confirm password" required />
+                        <i class='bx bx-lock-alt password'></i>
+                        <i class='fa fa-eye-slash pw_hide'></i>
+                    </div>
+
+                    <button class="button">Sign Up</button>
+
+                    <div class="login_signup">
+                        Already have an account? <a href="#" id="login"> Login</a>
+                    </div>
+                </form>
+            </div>
+        </i>
+        </div>
+
+    </section>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+        // Your web app's Firebase configuration
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAVMivFBYZHxWDFw9MKt02CWpb85MCzJ4",
+            authDomain: "loginsignauth-cf5bb.firebaseapp.com",
+            projectId: "loginsignauth-cf5bb",
+            storageBucket: "loginsignauth-cf5bb.appspot.com",
+            messagingSenderId: "436692858400",
+            appId: "1:436692858400:web:4baa9de7c0174a37dbee45"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const formOpenBtn = document.querySelector("#form-open"),
+                home = document.querySelector(".home"),
+                formContainer = document.querySelector(".form_container"),
+                formCloseBtn = document.querySelector(".form_close"),
+                signupBtn = document.querySelector("#signup"),
+                loginBtn = document.querySelector("#login"),
+                logoutBtn = document.querySelector("#logout"),
+                pwShowHideIcons = document.querySelectorAll(".pw_hide");
+
+            const loginButton = document.querySelector("#form-open");
+            const logoutButton = document.querySelector("#logout");
+
+            loginBtn.style.display = "inline-block";
+            logoutBtn.style.display = "none";
+
+            function showLoginButton() {
+                loginButton.style.display = "inline-block";
+                logoutButton.style.display = "none";
+            }
+
+            function showLogoutButton() {
+                loginButton.style.display = "none";
+                logoutButton.style.display = "inline-block";
+            }
+
+            function checkLoginStatus() {
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    showLogoutButton();
+                } else {
+                    showLoginButton();
+                }
+            }
+
+            checkLoginStatus();
+
+            formOpenBtn.addEventListener("click", () => home.classList.add("show"));
+            formCloseBtn.addEventListener("click", () => home.classList.remove("show"));
+
+            pwShowHideIcons.forEach(icon => {
+                icon.addEventListener("click", () => {
+                    let getPwInput = icon.parentElement.querySelector("input");
+                    if (getPwInput.type === "password") {
+                        getPwInput.type = "text";
+                        icon.classList.replace("fa-eye-slash", "fa-eye");
+                    } else {
+                        getPwInput.type = "password";
+                        icon.classList.replace("fa-eye", "fa-eye-slash");
+                    }
+                });
+            });
+
+            signupBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                formContainer.classList.add("active");
+                const signupForm = document.getElementById("signup_form");
+                const loginForm = document.getElementById("login_form");
+
+                signupForm.classList.add("active");
+                loginForm.classList.remove("active");
+            });
+
+            loginBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                formContainer.classList.remove("active");
+                const signupForm = document.getElementById("signup_form");
+                const loginForm = document.getElementById("login_form");
+
+                signupForm.classList.remove("active");
+                loginForm.classList.add("active");
+            });
+
+            document.querySelector("#signup_form form").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const emailInput = document.querySelector("#signmail input").value;
+                const passwordInput = document.querySelector("#signpass input").value;
+
+                createUserWithEmailAndPassword(auth, emailInput, passwordInput)
+                    .then((userCredential) => {
+                        alert("Pendaftaran berhasil!");
+                        this.reset();
+                        showLoginButton();
+                    })
+                    .catch((error) => {
+                        alert(error.message);
+                    });
+            });
+
+            document.getElementById("login_form").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const emailInput = document.querySelector("#logmail input").value;
+                const passwordInput = document.querySelector("#logpass input").value;
+
+
+                signInWithEmailAndPassword(auth, emailInput, passwordInput)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        const username = emailInput.split('@')[0];
+                        localStorage.setItem('currentUser', username);
+                        alert(`Selamat datang, ${username}!`);
+                        showLogoutButton();
+
+                        document.getElementById("timerLink").classList.remove("disabled");
+                        document.getElementById("medicineLink").classList.remove("disabled");
+
+                        document.getElementById("timerLink").href = "timer.html";
+                        document.getElementById("medicineLink").href = "medicine.html";
+                    })
+                    .catch((error) => {
+                        alert(error.message);
+                    });
+            });
+
+            document.getElementById("timerLink").addEventListener("click", function (e) {
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    e.preventDefault();
+                    alert("Anda harus login terlebih dahulu.");
+                } else {
+                    document.getElementById("timerLink").href = "timer.html";
+                }
+            });
+
+            document.getElementById("medicineLink").addEventListener("click", function (e) {
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    e.preventDefault();
+                    alert("Anda harus login terlebih dahulu.");
+                } else {
+                    document.getElementById("medicineLink").href = "medicine.html";
+                }
+            });
+
+
+            logoutBtn.addEventListener("click", () => {
+                signOut(auth).then(() => {
+                    localStorage.removeItem("currentUser");
+                    showLoginButton();
+                }).catch((error) => {
+                    alert(error.message);
+                });
+            });
+
+            // Implementasi Remember Me
+            const rememberMeCheckbox = document.getElementById('check');
+            const emailInput = document.getElementById('logmail').querySelector('input');
+            const passwordInput = document.getElementById('logpass').querySelector('input');
+
+            // Cek apakah ada data remember me dalam local storage
+            const rememberMeData = JSON.parse(localStorage.getItem('rememberMeData'));
+            if (rememberMeData && rememberMeData.checked) {
+                rememberMeCheckbox.checked = true;
+                emailInput.value = rememberMeData.email;
+                passwordInput.value = rememberMeData.password;
+            }
+
+            // Tambahkan event listener untuk checkbox remember me
+            rememberMeCheckbox.addEventListener('change', () => {
+                const checked = rememberMeCheckbox.checked;
+                const email = emailInput.value;
+                const password = passwordInput.value;
+
+                // Simpan data remember me dalam local storage
+                localStorage.setItem('rememberMeData', JSON.stringify({ checked, email, password }));
+            });
+        });
+    </script>
+</body>
+</html>

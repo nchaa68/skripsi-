@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE-edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="medicine.css" />
+    <title>MedStance</title>
+</head>
+
+<body>
+
+    <header header class="header">
+        <nav class="nav">
+            <a href="#" class="nav-logo">MedStance</a>
+            <ul class="nav-items">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="timer.html" class="nav-link">Alarm</a>
+                    <a href="medicine.html" class="nav-link">Medicine</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div>
+        <div>
+            <div>
+                <h1>Store Your Medicine Here</h1>
+            </div>
+            <form action="" id="medicineForm" autocomplete="off">
+                <div>
+                    <label for="medName">Medicine Name</label>
+                    <input class="form-control" id="medName" type="text" placeholder="Enter medicine name" required>
+                </div>
+                <div>
+                    <label for="compartment">Compartment</label>
+                    <select id="noComp" name="compartment" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="qty" name="quantity" required>
+                </div>
+                <div>
+                    <button id="submit" type="submit">Submit</button>
+                    <button id="update" type="button">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Medicine</th>
+                <th>Compartment</th>
+                <th>Quantity</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="medTableBody">
+            <!-- Data akan ditambahkan di sini -->
+        </tbody>
+    </table>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+        import { getDatabase, ref, set, get, child, remove } from 
+        "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAx7gQ7QVpawuz9FgpqT6bU0Wsz2hmhNsg",
+            authDomain: "crudmedlist-8b416.firebaseapp.com",
+            projectId: "crudmedlist-8b416",
+            storageBucket: "crudmedlist-8b416.appspot.com",
+            messagingSenderId: "415072156885",
+            appId: "1:415072156885:web:ff23f8754a6d20f6c9765c"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+
+        document.getElementById('medicineForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const medName = document.getElementById('medName').value;
+            const compartment = document.getElementById('noComp').value;
+            const quantity = parseInt(document.getElementById('qty').value);
+
+            if (quantity < 10) {
+                alert('Kuantitas obat harus minimal 10!');
+                return;
+            }
+
+            const dbRef = ref(db, 'meds');
+            get(child(dbRef, compartment)).then((snapshot) => {
+                const medsData = snapshot.val();
+
+                if (medsData) {
+                    alert('Kompartemen sudah terisi obat! pilih kompartemen lain :)');
+                    return;
+
+                } else {
+                    set(child(dbRef, compartment), {
+                        medicine: medName,
+                        compartment: compartment,
+                        quantity: quantity,
+                    });
+
+                    alert('Your form is submitted');
+                    document.getElementById('medicineForm').reset();
+
+                    // Memperbarui tabel
+                    const medTableBody = document.getElementById('medTableBody');
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${medName}</td>
+                        <td>${compartment}</td>
+                        <td>${quantity}</td>
+                        <td>
+                            <button class="editButton" data-key="${compartment}" type="button">Edit</button>
+                            <button class="deleteButton" data-key="${compartment}">Delete</button>
+                        </td>
+                    `;
+                    medTableBody.appendChild(newRow);
+                }
+            });
+        });
+
+        const dbRef = ref(getDatabase(app));
+        get(child(dbRef, 'meds')).then((snapshot) => {
+            if (snapshot.exists()) {
+                const medsData = snapshot.val();
+                const medTableBody = document.getElementById('medTableBody');
+
+                Object.keys(medsData).forEach((key) => {
+                    const med = medsData[key];
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${med.medicine}</td>
+                        <td>${med.compartment}</td>
+                        <td>${med.quantity}</td>
+                        <td>
+                            <button class="editButton" data-key="${key}" type="button">Edit</button>
+                            <button class="deleteButton" data-key="${key}">Delete</button>
+                        </td>
+                    `;
+
+                    medTableBody.appendChild(row);
+                });
+            }
+        });
+
+        document.getElementById('medTableBody').addEventListener('click', function (e) {
+            if (e.target.classList.contains('editButton')) {
+                const key = e.target.dataset.key;
+                const dbRef = ref(db, 'meds/' + key);
+
+                get(dbRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const med = snapshot.val();
+                        document.getElementById('medName').value = med.medicine;
+                        document.getElementById('noComp').value = med.compartment;
+                        document.getElementById('qty').value = med.quantity;
+                    }
+                });
+            }
+        });
+
+        document.getElementById('update').addEventListener('click', function () {
+            const medName = document.getElementById('medName').value;
+            const compartment = document.getElementById('noComp').value;
+            const quantity = parseInt(document.getElementById('qty').value);
+
+            if (quantity < 10) {
+                alert('Kuantitas obat harus minimal 10!');
+                return;
+            }
+
+            const dbRef = ref(db, 'meds/' + compartment);
+
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    set(dbRef, {
+                        medicine: medName,
+                        compartment: compartment,
+                        quantity: quantity,
+                    });
+
+                    alert('Your form is updated');
+                    document.getElementById('medicineForm').reset();
+
+                    const medTableBody = document.getElementById('medTableBody');
+                    let rowUpdated = false;
+                    for (let i = 0; i < medTableBody.rows.length; i++) {
+                        const row = medTableBody.rows[i];
+                        const key = row.querySelector('.editButton').dataset.key;
+                        if (key === compartment) {
+                            row.innerHTML = `
+                        <td>${medName}</td>
+                        <td>${compartment}</td>
+                        <td>${quantity}</td>
+                        <td>
+                            <button class="editButton" data-key="${key}" type="button">Edit</button>
+                            <button class="deleteButton" data-key="${key}">Delete</button>
+                        </td>
+                    `;
+                            rowUpdated = true;
+                            break;
+                        }
+                    }
+
+                    if (!rowUpdated) {
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                    <td>${medName}</td>
+                    <td>${compartment}</td>
+                    <td>${quantity}</td>
+                    <td>
+                        <button class="editButton" data-key="${compartment}" type="button">Edit</button>
+                        <button class="deleteButton" data-key="${compartment}">Delete</button>
+                    </td> `;
+                        medTableBody.appendChild(newRow);
+                    }
+                } else {
+                    alert('Tidak ada data untuk diperbarui!');
+                }
+            });
+        });
+
+        document.getElementById('medTableBody').addEventListener('click', function (event) {
+            if (event.target.classList.contains('deleteButton')) {
+                const key = event.target.dataset.key;
+                const dbRef = ref(db, 'meds/' + key);
+
+                const confirmDelete = confirm("Apakah Anda yakin ingin menghapus obat ini?");
+                if (confirmDelete) {
+                    remove(dbRef)
+                        .then(() => {
+                            event.target.parentElement.parentElement.remove();
+                            alert("Obat berhasil dihapus!");
+                        })
+                        .catch((error) => {
+                            console.error("Error removing document: ", error);
+                            alert("Terjadi kesalahan, obat tidak dapat dihapus.");
+                        });
+                }
+            }
+        });
+
+
+    </script>
+
+</body>
+
+</html>
+
+
